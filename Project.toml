@@ -1,0 +1,13 @@
+name = "GNNCellTypeClassifier"
+uuid = "0c2646b3-f412-4bf4-bc3f-5f87d029c088"
+authors = ["Chris Damour"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.6.7"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
