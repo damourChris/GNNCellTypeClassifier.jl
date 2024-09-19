@@ -4,5 +4,6 @@
 /docs/Manifest.toml
 /docs/build/
 
-.CondaPkg
 Manifest.toml
+LocalPreferences.toml
+.CondaPkg
