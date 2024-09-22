@@ -9,10 +9,10 @@ function to_hetero_gnn(onto_tree::OntologyTree)
     # represents the edge between the gene at index1 and the cell type at index1
     gene_index_vector = [v_index
                          for (v_index, v_props) in graph.vprops
-                         if haskey(v_props, :gene_id)]
+                         if haskey(v_props, :type) && v_props[:type] == :gene]
     cell_index_ref_vector = [v_index
                              for (v_index, v_props) in graph.vprops
-                             if haskey(v_props, :term)]
+                             if haskey(v_props, :type) && v_props[:type] == :term]
 
     # In the hetero gnn, each node type is indexed separetely 
     # So we create 2 new vectors for each node type
@@ -33,18 +33,19 @@ function to_hetero_gnn(onto_tree::OntologyTree)
 
     # To find out the edges we need to iterate over the edges
     # and find the new indices of the nodes
+
     for edge in edges(graph)
         src_e = src(edge)
         dst_e = dst(edge)
 
-        src_type = haskey(graph.vprops[src_e], :gene_id) ? :gene : :cell
-        dst_type = haskey(graph.vprops[dst_e], :gene_id) ? :gene : :cell
+        src_type = graph.vprops[src_e][:type]
+        dst_type = graph.vprops[dst_e][:type]
 
-        src_index = haskey(graph.vprops[src_e], :gene_id) ?
+        src_index = graph.vprops[src_e][:type] == :gene ?
                     gene_indices_mapping[src_e] :
                     cell_indices_mapping[src_e]
 
-        dst_index = haskey(graph.vprops[dst_e], :gene_id) ?
+        dst_index = graph.vprops[dst_e][:type] == :gene ?
                     gene_indices_mapping[dst_e] :
                     cell_indices_mapping[dst_e]
 
@@ -71,7 +72,7 @@ function to_hetero_gnn(onto_tree::OntologyTree)
     cell_proportions = [haskey(graph.vprops[index], :proportion) ?
                         graph.vprops[index][:proportion] : missing
                         for index in cell_index_ref_vector]
-    ndata[:cell] = DataStore(; proportion=cell_proportions)
+    ndata[:term] = DataStore(; proportion=cell_proportions)
 
     # Now we can create the GNNHeteroGraph
     g = GNNHeteroGraph(edge_dict; ndata)
